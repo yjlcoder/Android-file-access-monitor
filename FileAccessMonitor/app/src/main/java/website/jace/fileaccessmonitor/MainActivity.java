@@ -28,8 +28,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Building file access data", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Data.getInstance().startBuild();
             }
         });
 

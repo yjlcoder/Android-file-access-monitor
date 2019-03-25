@@ -10,7 +10,7 @@ public class KernLogFetchingThread extends Thread{
         try {
             this.p = Runtime.getRuntime().exec("su");
             DataOutputStream out = new DataOutputStream(p.getOutputStream());
-            out.writeBytes("/system/bin/dmesg -w > /sdcard/kern.log\n");
+            out.writeBytes("/system/bin/dmesg -w >> /sdcard/kern.log\n");
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
