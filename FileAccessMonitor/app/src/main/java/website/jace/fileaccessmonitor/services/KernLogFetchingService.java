@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 
 public class KernLogFetchingService extends Service {
     private final IBinder binder = new MyBinder();
+    private KernLogFetchingThread thread = null;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -17,7 +19,8 @@ public class KernLogFetchingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int ret = super.onStartCommand(intent, flags, startId);
-        new KernLogFetchingThread().start();
+        this.thread = new KernLogFetchingThread();
+        thread.start();
         return ret;
     }
 
@@ -25,5 +28,11 @@ public class KernLogFetchingService extends Service {
         public KernLogFetchingService getService() {
             return KernLogFetchingService.this;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (thread != null)
+            thread.interrupt();
     }
 }
