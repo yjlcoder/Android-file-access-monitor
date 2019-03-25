@@ -1,10 +1,13 @@
 package website.jace.fileaccessmonitor;
 
 import android.annotation.SuppressLint;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Data {
@@ -20,14 +23,19 @@ public class Data {
     private Data() {
         this.uidPackagesMap = new HashMap<>();
         this.uidOwnedFolderMap = new HashMap<>();
+        this.kernDataItems = new ArrayList<>();
     }
 
-    private final static String kernelLogPath = "/sdcard/kern.log";
-    private final static String jniLogPath = "/sdcard/log";
+    private final static String kernelLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/kern.log";
+    private final static String jniLogPath = Environment.getExternalStorageDirectory().getPath() + "/log";
     private final static String UIDListPath = "/data/system/packages.list";
 
+    // uid list
     private Map<Integer, String> uidPackagesMap;
     private Map<Integer, String> uidOwnedFolderMap;
+
+    // kernel log
+    private List<DataItem> kernDataItems;
 
     public void startBuild() {
         readUIDList();
@@ -38,7 +46,6 @@ public class Data {
     private void readUIDList() {
         try {
             Process p = Runtime.getRuntime().exec("su");
-            System.out.println("!!!");
             DataOutputStream out = new DataOutputStream(p.getOutputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             out.writeBytes("cat " + UIDListPath + "\n");
@@ -64,7 +71,20 @@ public class Data {
     }
 
     private void buildKernelLog() {
-
+        File file = new File(kernelLogPath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while(reader.ready()) {
+                String line = reader.readLine();
+                if (line.contains("YANG: ") && line.contains("OPEN")) {
+                    kernDataItems.add(new KernDataItem(line, uidPackagesMap));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void buildJNILog() {
