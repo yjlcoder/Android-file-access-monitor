@@ -1,6 +1,5 @@
 package website.jace.fileaccessmonitor;
 
-import android.annotation.SuppressLint;
 import android.os.Environment;
 import android.util.Log;
 
@@ -24,10 +23,11 @@ public class Data {
         this.uidPackagesMap = new HashMap<>();
         this.uidOwnedFolderMap = new HashMap<>();
         this.kernDataItems = new ArrayList<>();
+        this.jniDataItems = new ArrayList<>();
     }
 
     private final static String kernelLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/kern.log";
-    private final static String jniLogPath = Environment.getExternalStorageDirectory().getPath() + "/log";
+    private final static String jniLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/jni.log";
     private final static String UIDListPath = "/data/system/packages.list";
 
     // uid list
@@ -36,6 +36,9 @@ public class Data {
 
     // kernel log
     private List<DataItem> kernDataItems;
+
+    // jni log
+    private List<DataItem> jniDataItems;
 
     public void startBuild() {
         readUIDList();
@@ -80,14 +83,21 @@ public class Data {
                     kernDataItems.add(new KernDataItem(line, uidPackagesMap));
                 }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void buildJNILog() {
-
+        File file = new File(jniLogPath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while (reader.ready()) {
+                String line = reader.readLine();
+                jniDataItems.add(new JNIDataItem(line, uidPackagesMap));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
