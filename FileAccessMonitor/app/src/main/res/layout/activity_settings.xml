@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+    <TextView
+        android:id="@+id/service_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/service_not_running"
+        android:textSize="32sp"
+        android:gravity="center"
+        android:textColor="@color/red"
+    />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+
+    <Button
+        android:id="@+id/service_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_service"
+        android:layout_weight="1"
+    />
+
+    <Button
+        android:id="@+id/service_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_service"
+        android:layout_weight="1"
+    />
+
+  </LinearLayout>
+</LinearLayout>
+
