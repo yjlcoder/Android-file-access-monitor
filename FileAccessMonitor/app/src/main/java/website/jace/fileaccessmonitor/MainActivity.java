@@ -17,15 +17,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
+
+import java.util.*;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private class Target {
+        final static int KERNEL = 1;
+        final static int JNI = 2;
+    }
+
+    private class Type {
+        final static int APPLICATION = 1;
+        final static int TYPE = 2;
+    }
+
+    private ExpandableListView expandableListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        expandableListView = findViewById(R.id.expandableListView);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -41,6 +58,7 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Building file access data", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Data.getInstance().startBuild();
+                refreshData(Target.KERNEL, Type.APPLICATION);
             }
         });
 
@@ -94,18 +112,40 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        if (id == R.id.nav_application_kernel) {
+            refreshData(Target.KERNEL, Type.APPLICATION);
+        } else if (id == R.id.nav_application_jni) {
+            refreshData(Target.JNI, Type.APPLICATION);
+        } else if (id == R.id.nav_type_kernel) {
+            refreshData(Target.KERNEL, Type.TYPE);
+        } else if (id == R.id.nav_type_jni) {
+            refreshData(Target.JNI, Type.TYPE);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void refreshData(int target, int type){
+        List<DataItem> list = null;
+        if (target == Target.KERNEL) list = Data.getInstance().kernDataItems;
+        else list = Data.getInstance().jniDataItems;
+
+        if (type == Type.APPLICATION) {
+            Set<String> hashSet = new HashSet<>();
+
+            for (DataItem item: list)
+                    hashSet.add(item.getPackageName());
+
+            List<String> titles = new ArrayList<>(hashSet);
+            Map<String, List<String>> map = new HashMap<>();
+            for (String title: titles)
+                map.put(title, new ArrayList<>());
+            for (DataItem item: list)
+                map.get(item.getPackageName()).add(item.getAccessPath());
+
+            this.expandableListView.setAdapter(new MyExpandableListAdapter(MainActivity.this, titles, map));
+        }
     }
 }

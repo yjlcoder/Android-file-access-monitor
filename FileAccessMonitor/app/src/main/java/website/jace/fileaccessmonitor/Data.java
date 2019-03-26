@@ -31,14 +31,14 @@ public class Data {
     private final static String UIDListPath = "/data/system/packages.list";
 
     // uid list
-    private Map<Integer, String> uidPackagesMap;
-    private Map<Integer, String> uidOwnedFolderMap;
+    public Map<Integer, String> uidPackagesMap;
+    public Map<Integer, String> uidOwnedFolderMap;
 
     // kernel log
-    private List<DataItem> kernDataItems;
+    public List<DataItem> kernDataItems;
 
     // jni log
-    private List<DataItem> jniDataItems;
+    public List<DataItem> jniDataItems;
 
     public void startBuild() {
         readUIDList();
