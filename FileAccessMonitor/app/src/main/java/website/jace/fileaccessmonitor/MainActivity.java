@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
             for (String title : titles)
                 map.put(title, new ArrayList<>());
             for (DataItem item : list)
-                map.get(item.getApplicationName()).add(item.getAccessPath());
+                map.get(item.getApplicationName()).add("[" + item.getTimeString() + "] " + item.getAccessPath());
 
             this.expandableListView.setAdapter(new MyExpandableListAdapter(MainActivity.this, titles, map));
         }

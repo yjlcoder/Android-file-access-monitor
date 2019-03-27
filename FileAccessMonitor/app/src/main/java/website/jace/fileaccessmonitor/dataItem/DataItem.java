@@ -2,6 +2,8 @@ package website.jace.fileaccessmonitor.dataItem;
 
 import android.content.pm.PackageManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -12,6 +14,8 @@ public abstract class DataItem {
     private String accessPath;
 
     private String applicationName;
+
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public DataItem(String logItem, Map<Integer, String> packageList) {
         initialize(logItem, packageList);
@@ -57,5 +61,9 @@ public abstract class DataItem {
 
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+    }
+
+    public String getTimeString() {
+        return dateFormat.format(datetime);
     }
 }
