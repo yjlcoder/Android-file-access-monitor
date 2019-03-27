@@ -1,6 +1,7 @@
-package website.jace.fileaccessmonitor;
+package website.jace.fileaccessmonitor.dataItem;
 
-import java.time.LocalDateTime;
+import android.content.pm.PackageManager;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ public abstract class DataItem {
     private String packageName;
     private Date datetime;
     private String accessPath;
+
+    private String applicationName;
 
     public DataItem(String logItem, Map<Integer, String> packageList) {
         initialize(logItem, packageList);
@@ -32,6 +35,10 @@ public abstract class DataItem {
         return packageName;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
     public void setAccessPath(String accessPath) {
         this.accessPath = accessPath;
     }
@@ -46,5 +53,9 @@ public abstract class DataItem {
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 }

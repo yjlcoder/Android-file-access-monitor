@@ -2,6 +2,9 @@ package website.jace.fileaccessmonitor;
 
 import android.os.Environment;
 import android.util.Log;
+import website.jace.fileaccessmonitor.dataItem.DataItem;
+import website.jace.fileaccessmonitor.dataItem.JNIDataItem;
+import website.jace.fileaccessmonitor.dataItem.KernDataItem;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class Data {
         this.uidOwnedFolderMap = new HashMap<>();
         this.kernDataItems = new ArrayList<>();
         this.jniDataItems = new ArrayList<>();
+        packageApplicationNameMap = new HashMap<>();
     }
 
     private final static String kernelLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/kern.log";
@@ -39,6 +43,9 @@ public class Data {
 
     // jni log
     public List<DataItem> jniDataItems;
+
+    // packageName to ApplicationName
+    public Map<String, String> packageApplicationNameMap;
 
     public void startBuild() {
         readUIDList();
@@ -80,7 +87,10 @@ public class Data {
             while(reader.ready()) {
                 String line = reader.readLine();
                 if (line.contains("YANG: ") && line.contains("OPEN")) {
-                    kernDataItems.add(new KernDataItem(line, uidPackagesMap));
+                    KernDataItem kernDataItem = new KernDataItem(line, uidPackagesMap);
+                    if (kernDataItem.getPackageName() != null) {
+                        kernDataItems.add(kernDataItem);
+                    }
                 }
             }
         } catch (IOException e) {

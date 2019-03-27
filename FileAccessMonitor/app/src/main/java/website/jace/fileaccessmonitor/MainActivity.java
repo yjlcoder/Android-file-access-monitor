@@ -2,6 +2,7 @@ package website.jace.fileaccessmonitor;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import website.jace.fileaccessmonitor.dataItem.DataItem;
 
 import java.util.*;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private ExpandableListView expandableListView;
+    private PackageManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         expandableListView = findViewById(R.id.expandableListView);
+        pm = getApplicationContext().getPackageManager();
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -58,6 +62,10 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Building file access data", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Data.getInstance().startBuild();
+                final PackageManager pm = getApplicationContext().getPackageManager();
+                ApplicationInfo ai;
+                setApplicationNames(Data.getInstance().kernDataItems);
+                setApplicationNames(Data.getInstance().jniDataItems);
                 refreshData(Target.KERNEL, Type.APPLICATION);
             }
         });
@@ -127,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void refreshData(int target, int type){
+    private void refreshData(int target, int type) {
         List<DataItem> list = null;
         if (target == Target.KERNEL) list = Data.getInstance().kernDataItems;
         else list = Data.getInstance().jniDataItems;
@@ -135,17 +143,35 @@ public class MainActivity extends AppCompatActivity
         if (type == Type.APPLICATION) {
             Set<String> hashSet = new HashSet<>();
 
-            for (DataItem item: list)
-                    hashSet.add(item.getPackageName());
+            for (DataItem item : list)
+                hashSet.add(item.getApplicationName());
 
             List<String> titles = new ArrayList<>(hashSet);
             Map<String, List<String>> map = new HashMap<>();
-            for (String title: titles)
+            for (String title : titles)
                 map.put(title, new ArrayList<>());
-            for (DataItem item: list)
-                map.get(item.getPackageName()).add(item.getAccessPath());
+            for (DataItem item : list)
+                map.get(item.getApplicationName()).add(item.getAccessPath());
 
             this.expandableListView.setAdapter(new MyExpandableListAdapter(MainActivity.this, titles, map));
+        }
+    }
+
+    private void setApplicationNames(List<DataItem> dataItems) {
+        for (DataItem dataItem : dataItems) {
+            String packageName = dataItem.getPackageName();
+            ApplicationInfo ai = null;
+            try {
+                ai = pm.getApplicationInfo(packageName, 0);
+            } catch (PackageManager.NameNotFoundException e) {
+            }
+            String applicationName;
+            applicationName = Data.getInstance().packageApplicationNameMap.get(packageName);
+            if (applicationName == null) {
+                    applicationName = ai != null ? (String) pm.getApplicationLabel(ai) : "Unknown";
+                    Data.getInstance().packageApplicationNameMap.put(packageName, applicationName);
+            }
+            dataItem.setApplicationName(applicationName);
         }
     }
 }
