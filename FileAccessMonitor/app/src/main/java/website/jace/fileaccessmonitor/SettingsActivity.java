@@ -9,51 +9,79 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import website.jace.fileaccessmonitor.services.JNILogFetchingService;
 import website.jace.fileaccessmonitor.services.KernLogFetchingService;
 
 public class SettingsActivity extends AppCompatActivity {
-    private TextView serviceStatus = null;
-    private Button serviceStartButton = null;
-    private Button serviceStopButton = null;
+    private TextView kernServiceStatus = null;
+    private Button kernServiceStartButton = null;
+    private Button kernServiceStopButton = null;
 
-    private boolean serviceRunning = false;
+    private TextView jniServiceStatus = null;
+    private Button jniServiceStartButton = null;
+    private Button jniServiceStopButton = null;
+
+    private boolean kernServiceRunning = false;
+    private boolean jniServiceRunning = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        this.serviceStatus = findViewById(R.id.service_status);
-        this.serviceStartButton = findViewById(R.id.service_start);
-        this.serviceStopButton = findViewById(R.id.service_stop);
+        this.kernServiceStatus = findViewById(R.id.kern_service_status);
+        this.kernServiceStartButton = findViewById(R.id.kern_service_start);
+        this.kernServiceStopButton = findViewById(R.id.kern_service_stop);
+
+        this.jniServiceStatus = findViewById(R.id.jni_service_status);
+        this.jniServiceStartButton = findViewById(R.id.jni_service_start);
+        this.jniServiceStopButton = findViewById(R.id.jni_service_stop);
 
         refreshStatus();
 
-        this.serviceStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!serviceRunning) {
-                    Intent serviceIntent = new Intent(SettingsActivity.this, KernLogFetchingService.class);
-                    startService(serviceIntent);
-                    refreshStatus();
-                }
+        this.kernServiceStartButton.setOnClickListener(v -> {
+            if (!kernServiceRunning) {
+                Intent serviceIntent = new Intent(SettingsActivity.this, KernLogFetchingService.class);
+                startService(serviceIntent);
+                refreshStatus();
             }
         });
 
-        this.serviceStopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (serviceRunning) {
-                    Intent serviceIntent = new Intent(SettingsActivity.this, KernLogFetchingService.class);
-                    stopService(serviceIntent);
-                    refreshStatus();
-                }
+        this.kernServiceStopButton.setOnClickListener(v -> {
+            if (kernServiceRunning) {
+                Intent serviceIntent = new Intent(SettingsActivity.this, KernLogFetchingService.class);
+                stopService(serviceIntent);
+                refreshStatus();
             }
         });
 
+        this.jniServiceStartButton.setOnClickListener(v -> {
+            if (!jniServiceRunning) {
+                Intent serviceIntent = new Intent(SettingsActivity.this, JNILogFetchingService.class);
+                startService(serviceIntent);
+                refreshStatus();
+            }
+        });
+
+        this.jniServiceStopButton.setOnClickListener(v -> {
+            if (jniServiceRunning) {
+                Intent serviceIntent = new Intent(SettingsActivity.this, JNILogFetchingService.class);
+                stopService(serviceIntent);
+                refreshStatus();
+            }
+        });
     }
 
-    private void setServiceStatus(Boolean started) {
+    private void setServiceStatus(Boolean started, String service) {
+        TextView serviceStatus;
+        if (service.startsWith("kern")){
+            serviceStatus = this.kernServiceStatus;
+            kernServiceRunning = started;
+        }
+        else{
+            serviceStatus = this.jniServiceStatus;
+            jniServiceRunning = started;
+        }
         if (started) {
             serviceStatus.setText(getResources().getText(R.string.service_running));
             serviceStatus.setTextColor(getResources().getColor(R.color.black));
@@ -61,7 +89,6 @@ public class SettingsActivity extends AppCompatActivity {
             serviceStatus.setText(getResources().getText(R.string.service_not_running));
             serviceStatus.setTextColor(getResources().getColor(R.color.red));
         }
-        serviceRunning = started;
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -75,7 +102,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void refreshStatus() {
-        if (isMyServiceRunning(KernLogFetchingService.class)) setServiceStatus(true);
-        else setServiceStatus(false);
+        if (isMyServiceRunning(KernLogFetchingService.class)) setServiceStatus(true, "kern");
+        else setServiceStatus(false, "kern");
+
+        if (isMyServiceRunning(JNILogFetchingService.class)) setServiceStatus(true, "jni");
+        else setServiceStatus(false, "jni");
     }
 }

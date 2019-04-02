@@ -11,4 +11,6 @@
   <string name="service_running">Service is running</string>
   <string name="start_service">Start Service</string>
   <string name="stop_service">Stop Service</string>
+    <string name="kernel_log_tracking_service">Kernel Log Tracking Service</string>
+  <string name="jni_log_tracking_service">JNI Log Tracking Service</string>
 </resources>
