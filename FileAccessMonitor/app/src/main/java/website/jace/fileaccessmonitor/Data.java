@@ -22,13 +22,15 @@ public class Data {
         return single_instance;
     }
 
-    private Data() {
+    private void init() {
         this.uidPackagesMap = new HashMap<>();
         this.uidOwnedFolderMap = new HashMap<>();
         this.kernDataItems = new ArrayList<>();
         this.jniDataItems = new ArrayList<>();
         packageApplicationNameMap = new HashMap<>();
     }
+
+    private Data() { }
 
     private final static String kernelLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/kern.log";
     private final static String jniLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/jni.log";
@@ -48,6 +50,7 @@ public class Data {
     public Map<String, String> packageApplicationNameMap;
 
     public void startBuild() {
+        init();
         readUIDList();
         buildKernelLog();
         buildJNILog();
@@ -74,7 +77,7 @@ public class Data {
                 this.uidOwnedFolderMap.put(uid, folder);
             }
 
-            Log.d("YANG", "Read local user ids successfully, number of users: " + this.uidOwnedFolderMap.size());
+            Log.d("File Access Monitor", "Read local user ids successfully, number of users: " + this.uidOwnedFolderMap.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,7 +107,8 @@ public class Data {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while (reader.ready()) {
                 String line = reader.readLine();
-                jniDataItems.add(new JNIDataItem(line, uidPackagesMap));
+                if (line.contains("YANG") && line.contains("Open"))
+                    jniDataItems.add(new JNIDataItem(line, uidPackagesMap));
             }
         } catch (IOException e) {
             e.printStackTrace();

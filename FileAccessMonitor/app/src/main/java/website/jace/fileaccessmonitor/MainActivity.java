@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Building file access data", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Data.getInstance().startBuild();
-                final PackageManager pm = getApplicationContext().getPackageManager();
-                ApplicationInfo ai;
                 setApplicationNames(Data.getInstance().kernDataItems);
                 setApplicationNames(Data.getInstance().jniDataItems);
                 refreshData(Target.KERNEL, Type.APPLICATION);
