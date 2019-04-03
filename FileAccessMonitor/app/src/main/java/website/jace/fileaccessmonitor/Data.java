@@ -27,10 +27,12 @@ public class Data {
         this.uidOwnedFolderMap = new HashMap<>();
         this.kernDataItems = new ArrayList<>();
         this.jniDataItems = new ArrayList<>();
-        packageApplicationNameMap = new HashMap<>();
+        this.packageApplicationNameMap = new HashMap<>();
+        this.appIdModelList = new ArrayList<>();
     }
 
-    private Data() { }
+    private Data() {
+    }
 
     private final static String kernelLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/kern.log";
     private final static String jniLogPath = Environment.getExternalStorageDirectory().getPath() + "/log/jni.log";
@@ -49,11 +51,19 @@ public class Data {
     // packageName to ApplicationName
     public Map<String, String> packageApplicationNameMap;
 
+    // AppIDList
+    public ArrayList<AppIdModel> appIdModelList;
+
     public void startBuild() {
         init();
         readUIDList();
         buildKernelLog();
         buildJNILog();
+    }
+
+    public void startReadUIDList() {
+        if (this.uidPackagesMap == null) init();
+        if (this.uidPackagesMap.size() == 0) readUIDList();
     }
 
     private void readUIDList() {
@@ -87,7 +97,7 @@ public class Data {
         File file = new File(kernelLogPath);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            while(reader.ready()) {
+            while (reader.ready()) {
                 String line = reader.readLine();
                 if (line.contains("YANG: ") && line.contains("OPEN")) {
                     KernDataItem kernDataItem = new KernDataItem(line, uidPackagesMap);

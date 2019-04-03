@@ -126,6 +126,9 @@ public class MainActivity extends AppCompatActivity
             refreshData(Target.KERNEL, Type.TYPE);
         } else if (id == R.id.nav_type_jni) {
             refreshData(Target.JNI, Type.TYPE);
+        } else if (id == R.id.edit_rules) {
+            Intent intent = new Intent(MainActivity.this, RulesActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -155,12 +158,12 @@ public class MainActivity extends AppCompatActivity
         } else if (type == Type.TYPE) {
             Set<String> hashSet = new HashSet<>();
 
-            for (DataItem item: list) hashSet.add(item.getFileType());
+            for (DataItem item : list) hashSet.add(item.getFileType());
 
             List<String> titles = new ArrayList<>(hashSet);
             Map<String, List<String>> map = new HashMap<>();
-            for (String title: titles) map.put(title, new ArrayList<>());
-            for (DataItem item: list)
+            for (String title : titles) map.put(title, new ArrayList<>());
+            for (DataItem item : list)
                 map.get(item.getFileType()).add("[" + item.getTimeString() + "] <" + item.getApplicationName() + "> " + item.getAccessPath());
 
             this.expandableListView.setAdapter(new MyExpandableListAdapter(MainActivity.this, titles, map));
@@ -170,16 +173,15 @@ public class MainActivity extends AppCompatActivity
     private void setApplicationNames(List<DataItem> dataItems) {
         for (DataItem dataItem : dataItems) {
             String packageName = dataItem.getPackageName();
-            ApplicationInfo ai = null;
-            try {
-                ai = pm.getApplicationInfo(packageName, 0);
-            } catch (PackageManager.NameNotFoundException e) {
-            }
-            String applicationName;
-            applicationName = Data.getInstance().packageApplicationNameMap.get(packageName);
+            String applicationName = Data.getInstance().packageApplicationNameMap.get(packageName);
             if (applicationName == null) {
-                    applicationName = ai != null ? (String) pm.getApplicationLabel(ai) : "Unknown";
-                    Data.getInstance().packageApplicationNameMap.put(packageName, applicationName);
+                ApplicationInfo ai = null;
+                try {
+                    ai = pm.getApplicationInfo(packageName, 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                }
+                applicationName = ai != null ? (String) pm.getApplicationLabel(ai) : "Unknown";
+                Data.getInstance().packageApplicationNameMap.put(packageName, applicationName);
             }
             dataItem.setApplicationName(applicationName);
         }

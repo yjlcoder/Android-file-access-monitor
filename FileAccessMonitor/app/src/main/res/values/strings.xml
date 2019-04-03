@@ -13,4 +13,5 @@
   <string name="stop_service">Stop Service</string>
     <string name="kernel_log_tracking_service">Kernel Log Tracking Service</string>
   <string name="jni_log_tracking_service">JNI Log Tracking Service</string>
+    <string name="edit_rules">Edit Rules</string>
 </resources>

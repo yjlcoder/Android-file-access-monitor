@@ -22,4 +22,11 @@
         android:title="By file type (JNI)"/>
   </group>
 
+  <group android:checkableBehavior="single">
+    <item
+            android:id="@+id/edit_rules"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Edit rules"/>
+  </group>
+
 </menu>

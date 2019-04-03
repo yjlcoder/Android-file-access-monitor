@@ -29,6 +29,12 @@
         android:parentActivityName=".MainActivity">
       <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity"/>
     </activity>
+    <activity
+        android:name=".RulesActivity"
+        android:label="@string/edit_rules"
+        android:parentActivityName=".MainActivity">
+      <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity"/>
+    </activity>
     <service android:name=".services.KernLogFetchingService" android:exported="false"/>
     <service android:name=".services.JNILogFetchingService" android:exported="false"/>
   </application>
