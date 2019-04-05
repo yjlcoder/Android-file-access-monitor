@@ -5,20 +5,26 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Collections.*;
 
 public class RulesActivity extends AppCompatActivity {
     private PackageManager pm;
+    private FloatingActionButton fab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,6 +33,8 @@ public class RulesActivity extends AppCompatActivity {
 
         Data.getInstance().startReadUIDList();
         pm = getApplicationContext().getPackageManager();
+        fab = findViewById(R.id.rules_save_button);
+
         for (String packageName: Data.getInstance().uidPackagesMap.values()) {
             if (!Data.getInstance().packageApplicationNameMap.keySet().contains(packageName)) {
                 ApplicationInfo ai;
@@ -72,5 +80,23 @@ public class RulesActivity extends AppCompatActivity {
         RulesAdapter adapter = new RulesAdapter(RulesActivity.this, rules);
         ListView rulesListView = findViewById(R.id.rules_listview);
         rulesListView.setAdapter(adapter);
+
+        fab.setOnClickListener(v -> {
+            List<RuleModel> ruleList = adapter.getDataSet();
+
+            try{
+                BufferedWriter writer = new BufferedWriter(new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/log/rules.conf"));
+                for (RuleModel rule: ruleList) {
+                    String toWrite = String.valueOf(rule.getUid()) + "," + rule.getPath() + "," + rule.getRealPath() + "\n";
+                    writer.write(toWrite);
+                }
+                writer.close();
+                Toast.makeText(getApplicationContext(), "Save successfully", Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed to save: IOException", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

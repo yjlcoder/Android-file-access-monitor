@@ -55,4 +55,8 @@ public class RuleModel {
     public AppIdModel getAppId() {
         return appId;
     }
+
+    public void setAppId(AppIdModel appId) {
+        this.appId = appId;
+    }
 }
