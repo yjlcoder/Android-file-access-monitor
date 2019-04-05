@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class JNIDataItem extends DataItem {
     private final static String TIMEFORMAT_STRING = "yyyy-MM-dd HH:mm:ss";
     private final static String PATTERN_STR = "^[\\s\\S]+YANG:\\s\\[(\\d+\\-\\d+\\-\\d+ \\d+:\\d+:\\d+)]\\s<(\\d+)>\\sOpen file\\s(\\S+)$";
-    private final static Pattern PATTERN = Pattern.compile(PATTERN_STR);
+    public final static Pattern PATTERN = Pattern.compile(PATTERN_STR);
     private final static SimpleDateFormat TIMEFORMAT = new SimpleDateFormat(TIMEFORMAT_STRING);
 
     public JNIDataItem(String logItem, Map<Integer, String> packageList) {

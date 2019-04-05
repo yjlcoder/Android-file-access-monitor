@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class KernDataItem extends DataItem {
     private final static String TIMEFORMAT_STRING = "[yyyy-MM-dd HH:mm:ss]";
     private final static String PATTERN_STR = "(\\[\\d{4}-\\d{1,2}-\\d{1,2} \\d{1,2}:\\d{1,2}:\\d{1,2}])\\s(OPEN)\\s(\\d+),\\s(\\d+),\\s(\\d+),\\s(\\d+),\\s(\\S+)";
-    private final static Pattern PATTERN = Pattern.compile(PATTERN_STR);
+    public final static Pattern PATTERN = Pattern.compile(PATTERN_STR);
     private final static SimpleDateFormat TIMEFORMAT = new SimpleDateFormat(TIMEFORMAT_STRING);
 
     public KernDataItem(String logItem, Map<Integer, String> packageList) {

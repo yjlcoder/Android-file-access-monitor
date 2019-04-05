@@ -60,6 +60,7 @@ public class RulesActivity extends AppCompatActivity {
             BufferedReader reader = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/log/rules.conf")));
             while (reader.ready()) {
                 String line = reader.readLine();
+                if (line.length() < 2) continue;
                 String[] segments = line.split(",");
                 int uid = Integer.valueOf(segments[0]);
                 String path = segments[1];

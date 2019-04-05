@@ -117,7 +117,7 @@ public class Data {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while (reader.ready()) {
                 String line = reader.readLine();
-                if (line.contains("YANG") && line.contains("Open"))
+                if (JNIDataItem.PATTERN.matcher(line).matches())
                     jniDataItems.add(new JNIDataItem(line, uidPackagesMap));
             }
         } catch (IOException e) {
